@@ -1,0 +1,35 @@
+import requests, lxml.html
+
+s = requests.session()
+
+login = s.get("https://ol.binus.ac.id/LoginBinusian")
+login_html = lxml.html.fromstring(login.text)
+
+hidden_inputs = login_html.xpath(r'//form//input[@type="hidden"]')
+form = {x.attrib["name"]: x.attrib["value"] for x in hidden_inputs}
+#print(form)
+
+form['TextBoxID'] = "agnesia@binus.ac.id"
+form['TxtPassword'] = "b!Nu$28081997"
+form['ButtonLogin'] = 'Login'
+
+
+response = s.post("https://ol.binus.ac.id/LoginBinusian", data = form)
+
+print(response.url)
+print(response.content)
+tree = lxml.html.fromstring(response.content)
+#tes = tree.xpath("//span[@id='MainContent_UCStudentLoginProfile1_LabelStudentName']/a/text()")
+announcement = tree.xpath("//div//h1[@class='heading']/text()")
+content1 ='//div[@data-title="'
+content2 = ' of 9"]//p/text()'
+
+x =1
+
+for a in announcement:
+    print ("Announcement : ", a)
+    print(content1+str(x)+content2)
+    content = tree.xpath(content1+str(x)+content2)
+    x = x + 1
+    for b in content:
+        print(b)
