@@ -93,7 +93,7 @@ public class Home extends AppCompatActivity {
                                 imageCategory.setImageResource(R.drawable.soccer_icon);
                                 return true;
                             case R.id.type_volley:
-                                imageCategory.setImageResource(R.drawable.volley_icon);
+                                imageCategory.setImageResource(R.drawable.volley_logo);
                                 return true;
                             case R.id.type_tennis:
                                 imageCategory.setImageResource(R.drawable.tennis_logo);
