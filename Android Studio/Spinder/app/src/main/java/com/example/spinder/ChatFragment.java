@@ -21,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.spinder.interfaces.VolleyCallback;
+import com.example.spinder.utils.RestWebService;
 import com.example.spinder.utils.SingletonInstance;
 
 import org.json.JSONArray;
@@ -167,86 +169,70 @@ public class ChatFragment extends Fragment {
         //RequestQueue queue = SingletonInstance.getInstance(getContext()).
         //        getRequestQueue();
 
-
-
-
-        String url ="http://spinder-v2-spinder-test.193b.starter-ca-central-1.openshiftapps.com/games/recent";
-
         EditText indexView = getView().findViewById(R.id.editText);
-        if(indexView.getText().length() != 0){
-            url += ("/" + indexView.getText());
-        }
-        Log.d("TAG", "FINAL URL:" + url);
+        mTextView.setText("");
 
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        /*mTextView.setText("Response is: "+ response);*/
-                        mTextView.setText("");
-                        ArrayList<String> recentGames = new ArrayList<String>();
+        RestWebService.getJSONData(indexView.getText().toString(), this.getContext(), new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject jsonObject) {
 
-                        String responseJSONPlain = response.toString();
+                String index, game, loc, time;
+                index = game = loc = time = "";
+
+
+                JSONArray gamesList = null;
+                JSONObject singleGame = null;
+                boolean isAllGames = true;
+                try {
+                    gamesList = jsonObject.getJSONArray("games");
+                } catch (JSONException e) {
+                    try {
+                        singleGame = jsonObject.getJSONObject("games");
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+                    isAllGames = false;
+                }
+
+                if(isAllGames) {
+                    for (int i = 0; i < gamesList.length(); i++) {
                         try {
-                            String id, title, location, time;
-                            id = title = location = time = "";
+                            JSONObject eachGame = null;
+                            eachGame = gamesList.getJSONObject(i);
+                            Log.d("ALL GAME", eachGame.toString());
 
-                            JSONObject jsonObj = new JSONObject(responseJSONPlain);
-                            boolean isArray = true;
-                            JSONArray gamesArray = null;
-                            JSONObject gameSingle = null;
-
-                            // Getting JSON Array node or object
-                            try {
-                                gamesArray = jsonObj.getJSONArray("games");
-                            } catch (JSONException e){
-                                isArray = false;
-                                gameSingle = jsonObj.getJSONObject("games");
-                            }
-
-
-                            if(isArray) {
-                                for (int i = 0; i < gamesArray.length(); i++) {
-                                    JSONObject c = gamesArray.getJSONObject(i);
-                                    title = c.getString("title");
-                                    location = c.getString("location");
-                                    time = c.getString("time");
-                                    id = c.getString("id");
-
-                                    mTextView.append(id + " " + title + " " + location + " " + time + "\n");
-                                }
-                            }
-                            else{
-                                id = gameSingle.getString("id");
-                                title = gameSingle.getString("title");
-                                location = gameSingle.getString("location");
-                                time = gameSingle.getString("time");
-
-                                mTextView.append(id + " " + title + " " + location + " " + time + "\n");
-                            }
-
-
+                            index = eachGame.getString("id").toString();
+                            game = eachGame.getString("title").toString();
+                            loc = eachGame.getString("location").toString();
+                            time = eachGame.getString("time").toString();
+                            mTextView.append(index + " " + game + " " + loc + " " + time + "\n");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
-
                     }
-                }, new Response.ErrorListener() {
+                }
+                else{
+                    Log.d("SINGLE GAME", singleGame.toString());
+                    try {
+                        index = singleGame.getString("id").toString();
+                        game = singleGame.getString("title").toString();
+                        loc = singleGame.getString("location").toString();
+                        time = singleGame.getString("time").toString();
+                        mTextView.append(index + " " + game + " " + loc + " " + time);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
             @Override
-            public void onErrorResponse(VolleyError error) {
-                mTextView.setText("That didn't work!");
+            public void onFailed(){
+                mTextView.append("Wrong Input");
             }
         });
 
-        // Add the request to the RequestQueue.
-        //queue.add(stringRequest);
-
-
         // Add a request (in this example, called stringRequest) to your RequestQueue.
-        SingletonInstance.getInstance(getContext()).addToRequestQueue(stringRequest);
+        //SingletonInstance.getInstance(getContext()).addToRequestQueue(stringRequest);
     }
 
     public void createService(){

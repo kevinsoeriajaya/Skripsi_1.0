@@ -10,9 +10,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.example.spinder.R;
+import com.example.spinder.interfaces.VolleyCallback;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,5 +70,42 @@ public class RestWebService {
             e.printStackTrace();
         }
 
+    }
+
+    public static void getJSONData(String index, final Context context, final VolleyCallback volleyCallback){
+        String url ="http://spinder-v2-spinder-test.193b.starter-ca-central-1.openshiftapps.com/games/recent";
+        if(!index.equals("")){
+            url += ("/" + index);
+        }
+
+        String message = "";
+
+        Log.d("TAG", "FINAL URL ARRAY JSON:" + url);
+
+        // Request a string response from the provided URL.
+        try {
+            JsonObjectRequest jsonObjectReq = new JsonObjectRequest(url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+
+                            //Log.d("RESPONSE", response.toString());
+                            volleyCallback.onSuccess(response);
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.d("TAG", "GET JSON ERROR");
+                            volleyCallback.onFailed();
+                            //Log.d("TAG", error.getMessage().toString());
+                        }
+            });
+
+            SingletonInstance.getInstance(context).addToRequestQueue(jsonObjectReq);
+        }
+        catch (Exception e){
+            Log.d("TAG", "CATCH");
+            e.printStackTrace();
+        }
     }
 }
