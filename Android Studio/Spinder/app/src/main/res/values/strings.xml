@@ -11,4 +11,10 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="activity_name_1">Add Data</string>
+    <string name="title_game">Game</string>
+    <string name="title_location">Location</string>
+    <string name="title_time">Time</string>
+    <string name="button_submit">Submit</string>
+    <string name="button_add_game">Add Game</string>
 </resources>
