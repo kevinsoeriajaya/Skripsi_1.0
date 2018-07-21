@@ -6,9 +6,24 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.example.spinder.utils.SingletonInstance;
+import com.facebook.shimmer.ShimmerFrameLayout;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +42,16 @@ public class HomeFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private static final String TAG = HomeFragment.class.getSimpleName();
+    private RecyclerView recyclerView;
+    private List<RoomData> roomList;
+    private ListAdapter mAdapter;
+
+    public ShimmerFrameLayout mShimmerViewContainer;
+
+
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,17 +92,82 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         //return inflater.inflate(R.layout.fragment_home, container, false);
 
+
+
         //BARU DITAMBAHIN
         View view = inflater.inflate(R.layout.fragment_home,container,false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.listRecyclerView);
 
-        ListAdapter listAdapter = new ListAdapter();
-        recyclerView.setAdapter(listAdapter);
+
+        mShimmerViewContainer = view.findViewById(R.id.shimmer_view_container);
+
+        roomList = new ArrayList<>();
+        mAdapter = new ListAdapter(roomList);
+
+
+        recyclerView.setAdapter(mAdapter);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
+
+        fetchData();
+
         return view;
         //------------------------------------------------------------------------------------
     }
+
+    //private static final String URL = "http://spinder-v2-spinder-test.193b.starter-ca-central-1.openshiftapps.com/games/recent";
+    private static final String URL = "https://spinder-rest-heroku-1.herokuapp.com/games/recent";
+    private void fetchData() {
+        JsonArrayRequest request = new JsonArrayRequest(URL,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (response == null) {
+                            //Toast.makeText(getApplicationContext(), "Couldn't fetch the menu! Pleas try again.", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        List<RoomData> rooms = new Gson().fromJson(response.toString(), new TypeToken<List<RoomData>>() {
+                        }.getType());
+
+                        // adding recipes to cart list
+                        roomList.clear();
+                        roomList.addAll(rooms);
+                        Log.d("TEST", roomList.get(0).toString());
+                        // refreshing recycler view
+                        mAdapter.notifyDataSetChanged();
+
+                        // stop animating Shimmer and hide the layout
+                        mShimmerViewContainer.stopShimmer();
+                        mShimmerViewContainer.setVisibility(View.GONE);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // error in getting json
+                Log.e(TAG, "Error: " + error.getMessage());
+                //Toast.makeText(getApplicationContext(), "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //MyApplication.getInstance().addToRequestQueue(request);
+
+        SingletonInstance.getInstance(getContext()).addToRequestQueue(request);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(mShimmerViewContainer!=null)
+            mShimmerViewContainer.startShimmer();
+    }
+
+    @Override
+    public void onPause() {
+        mShimmerViewContainer.stopShimmer();
+        super.onPause();
+    }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

@@ -17,4 +17,6 @@
     <string name="title_time">Time</string>
     <string name="button_submit">Submit</string>
     <string name="button_add_game">Add Game</string>
+    <string name="access_token">Bearer 4a0e8ef2cf1f27731a5778e54ad84fcae8cd5139</string>
+    <string name="button_upload">Upload</string>
 </resources>

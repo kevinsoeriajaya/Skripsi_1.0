@@ -226,6 +226,11 @@ public class ChatFragment extends Fragment {
             }
 
             @Override
+            public void onSuccessImgur(String responseString) {
+
+            }
+
+            @Override
             public void onFailed(){
                 mTextView.append("Wrong Input");
             }

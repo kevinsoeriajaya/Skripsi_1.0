@@ -14,6 +14,7 @@
             android:scaleType="fitCenter"
             android:layout_margin="8dp"
             android:id="@+id/roomImage"/>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
