@@ -37,7 +37,7 @@ public class RestWebService {
         //        getRequestQueue();
 
         //String url ="http://spinder-v2-spinder-test.193b.starter-ca-central-1.openshiftapps.com/games/addJSON";
-        String url = "https://spinder-rest-heroku-1.herokuapp.com/games/addJSON";
+        String url = "https://spinder-spring-1.herokuapp.com/games";
         String message = "";
 
         Log.d("TAG", "FINAL URL:" + url);
@@ -50,6 +50,7 @@ public class RestWebService {
                         public void onResponse(JSONObject response) {
 
                     Log.d("RESPONSE", response.toString());
+                    Log.d(TAG, response.toString());
                     mToast = Toast.makeText(context, "Games submitted", Toast.LENGTH_SHORT);
                     mToast.show();
 
@@ -58,6 +59,7 @@ public class RestWebService {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Log.d("TAG", "POST ERROR");
+                    Log.d(TAG, error.toString());
                     mToast = Toast.makeText(context, "Games submit failed", Toast.LENGTH_SHORT);
                     mToast.show();
                     //Log.d("TAG", error.toString());
@@ -80,7 +82,9 @@ public class RestWebService {
 
     public static void getJSONData(String index, final Context context, final VolleyCallback volleyCallback){
         //String url ="http://spinder-v2-spinder-test.193b.starter-ca-central-1.openshiftapps.com/games/recent";
-        String url = "https://spinder-rest-heroku-1.herokuapp.com/games/recent";
+        //String url = "https://spinder-rest-heroku-1.herokuapp.com/games/recent";
+        String url = "https://spinder-spring-1.herokuapp.com/games";
+
         if(!index.equals("")){
             url += ("/" + index);
         }

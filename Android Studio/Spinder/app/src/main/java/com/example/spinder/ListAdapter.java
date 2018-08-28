@@ -3,6 +3,7 @@ package com.example.spinder;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListViewHolder
 
         //mRoomName.setText(RoomData.roomName[position]);
         //mRoomImage.setImageResource(RoomData.picturePath[position]);
+        Log.d("TAG: ", room.getUrl());
         Picasso.get()
                 .load(room.getUrl())
                 .resize(50, 50)

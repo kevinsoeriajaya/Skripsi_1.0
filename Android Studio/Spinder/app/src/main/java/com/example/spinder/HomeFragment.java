@@ -116,7 +116,7 @@ public class HomeFragment extends Fragment {
     }
 
     //private static final String URL = "http://spinder-v2-spinder-test.193b.starter-ca-central-1.openshiftapps.com/games/recent";
-    private static final String URL = "https://spinder-rest-heroku-1.herokuapp.com/games/recent";
+    private static final String URL = "https://spinder-spring-1.herokuapp.com/games";
     private void fetchData() {
         JsonArrayRequest request = new JsonArrayRequest(URL,
                 new Response.Listener<JSONArray>() {
